@@ -1,0 +1,19 @@
+[package]
+name = "rust-dbus"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+zbus = { version = "3.7.0", default-features = false, features = ["tokio"] }
+tokio = { version = "1.20.1", features = ["macros"] }
+
+
+[[bin]] # Bin to run the HelloWorld DBUS server
+name = "dbus-server"
+path = "src/server.rs"
+
+[[bin]] # Bin to run the HelloWorld DBUS client
+name = "dbus-client"
+path = "src/client.rs"
