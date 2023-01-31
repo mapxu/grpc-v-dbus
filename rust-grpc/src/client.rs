@@ -2,6 +2,10 @@ use greeter::greeter_client::GreeterClient;
 use greeter::HelloRequest;
 use greeter::InnerRequest;
 use tokio::time::{interval, sleep, Duration};
+use std::{fs, sync::Arc};
+
+const num_requests_per_sec: u64 = 1000;
+const num_threads: u64 = 50;
 
 // Import the generated proto-rust file into a module
 pub mod greeter {
@@ -10,6 +14,7 @@ pub mod greeter {
 
 async fn send_request(
     id: i64,
+    payload: Arc<String>,
     num_requests: u64,
     time_between_requests: u64,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -25,6 +30,7 @@ async fn send_request(
             inner: Some(InnerRequest {
                 secret: format!("secret-{}-{}", incarnation, id),
             }),
+            payload: (*payload).clone(),
         });
 
         // println!("Sending request to gRPC Server...");
@@ -38,21 +44,22 @@ async fn send_request(
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let num_requests_per_sec = 1000;
-    let num_threads = 50;
     let time_between_requests: u64 = 1000 * num_threads / num_requests_per_sec;
     let total_time_in_secs = 20;
     let num_requests_per_thread = total_time_in_secs * num_requests_per_sec / num_threads;
 
     let mut threads = vec![];
 
+    let payload = Arc::new(fs::read_to_string("../payload.txt")?);
+
     println!("Pausing...");
     sleep(Duration::from_millis(10000)).await;
     println!("Starting.");
 
     for id in 0..num_threads.try_into().unwrap() {
+        let new_payload = payload.clone();
         threads.push(tokio::spawn(async move {
-            send_request(id.clone(), num_requests_per_thread, time_between_requests)
+            send_request(id.clone(), new_payload, num_requests_per_thread, time_between_requests)
                 .await
                 .unwrap();
         }));

@@ -21,7 +21,7 @@ impl Greeter for MyGreeter {
         &self,
         request: Request<HelloRequest>,
     ) -> Result<Response<HelloResponse>, Status> {
-        println!("Received request from: {:?}", request);
+        // println!("Received request from: {:?}", request);
         let message = request.into_inner();
         let response = greeter::HelloResponse {
             message: format!(
@@ -31,6 +31,7 @@ impl Greeter for MyGreeter {
                 message.incarnation,
                 message.inner.as_ref().map_or("", |inner| &inner.secret)
             ),
+            payload: format!("{} {}", message.name, message.payload)
         };
 
         Ok(Response::new(response))

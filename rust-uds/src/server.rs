@@ -37,6 +37,7 @@ impl Greeter for MyGreeter {
                 message.incarnation,
                 message.inner.as_ref().map_or("", |inner| &inner.secret)
             ),
+            payload: format!("{} {}", message.name, message.payload)
         };
 
         Ok(Response::new(response))
@@ -54,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //     .serve(addr)
     //     .await?;
 
-    let path = "/tmp/tonic/greeter4";
+    let path = "/tmp/tonic/greeter7";
 
     std::fs::create_dir_all(Path::new(path).parent().unwrap())?;
 

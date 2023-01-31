@@ -10,10 +10,12 @@ message HelloRequest {
     string name = 2;
     int64 id = 1;
     int32 incarnation = 4;
+    string payload = 5;
 }
 
 message HelloResponse {
     string message = 1;
+    string payload = 2;
 }
 
 service Greeter {

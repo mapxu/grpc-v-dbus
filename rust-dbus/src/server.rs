@@ -8,12 +8,12 @@ struct Greeter {
 #[dbus_interface(name = "org.zbus.MyGreeter1")]
 impl Greeter {
     // Can be `async` as well.
-    fn say_hello(&mut self, name: &str, incarnation: i32, id: i64) -> String {
+    fn say_hello(&mut self, name: &str, incarnation: i32, id: i64, payload: String) -> String {
         self.count += 1;
         println!("Received request from {name}");
         format!(
-            "Hello {}! {}-{}: I have been called {} times.",
-            name, incarnation, id, self.count
+            "Hello {}! {}-{}: I have been called {} times. {}",
+            name, incarnation, id, self.count, payload
         )
     }
 }
